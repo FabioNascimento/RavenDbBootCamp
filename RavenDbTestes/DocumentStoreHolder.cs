@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Reflection;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Indexes;
 
 namespace RavenDbTestes
 {
@@ -13,7 +15,12 @@ namespace RavenDbTestes
                 Database = "Teste"
             };
 
-            return documentStore.Initialize();
+            documentStore.Initialize();
+
+            var asm = Assembly.GetExecutingAssembly();
+            IndexCreation.CreateIndexes(asm, documentStore);
+
+            return documentStore;
         });
 
         public static IDocumentStore Store => LazyStore.Value;

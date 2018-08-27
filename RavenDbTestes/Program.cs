@@ -9,6 +9,27 @@ namespace RavenDbTestes
     {
         static void Main(string[] args)
         {
+           //Run();
+//            new ProgramCrud().Run();
+//            IndexingSample.Test();
+//            new Index_Employees_ByFirstAndLastName().Execute(DocumentStoreHolder.Store);
+//            new IndexSampleByCode().Run();
+//            var multipleIndex = new MultipleIndex.ProgramMultMapINdex();
+//            multipleIndex.Run();
+            
+//            var mapReduce = new MapReduce1.Runner();            
+//            mapReduce.Execute();
+//            MapReduce2.Runner.Execute();
+            
+            RavenDbTestes.MapReduce1.Runner.Execute();
+            
+            WriteLine(new string('-', 100));
+            WriteLine("Digite um linha pra finalizar !!");
+            ReadLine();
+        }
+
+        static void Run()
+        {
             while (true)
             {
                 WriteLine("Please, enter a company id (0 to exit): ");
@@ -18,7 +39,9 @@ namespace RavenDbTestes
                 if (companyId == "0") 
                     break;
 
+//                QueryCompanyOrders(Convert.ToInt32(companyId));
                 QueryCompanyOrdersRql(Convert.ToInt32(companyId));
+                
             }
 
             WriteLine("Goodbye!");
@@ -48,7 +71,6 @@ namespace RavenDbTestes
             //}   
 
             //Console.WriteLine("Hello World!");
-
         }
         
         private static void QueryCompanyOrdersRql(int companyId)
@@ -58,10 +80,9 @@ namespace RavenDbTestes
             using (var session = DocumentStoreHolder.Store.OpenSession())
             {
                 var orders = session.Advanced.RawQuery<Order>(
-                                                              "from Orders "               +
-                                                              "where Company== $companyId" +
-                                                              "include Company"
-                                                             ).AddParameter("companyId", chaveDaEmpresa);
+                    "from Orders where Company == $companyId include Company");
+
+                orders.AddParameter("$companyId", chaveDaEmpresa);
 
                 var company = session.Load<Company>(chaveDaEmpresa);
 
@@ -80,7 +101,7 @@ namespace RavenDbTestes
             }
         }
 
-        private static void QueryCompanyOrders(string companyId)
+        private static void QueryCompanyOrders(int companyId)
         {
             using (var session = DocumentStoreHolder.Store.OpenSession())
             {
